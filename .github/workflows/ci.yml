@@ -1,0 +1,29 @@
+name: Homebrew CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homebrew-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  formula:
+    name: Audit, install, and test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Tap checkout
+        run: brew tap bursula/tap "$GITHUB_WORKSPACE"
+      - name: Audit formula
+        run: brew audit --strict --online --formula bursula/tap/bursula
+      - name: Install formula
+        run: brew install --build-from-source bursula/tap/bursula
+      - name: Test formula
+        run: brew test bursula/tap/bursula
