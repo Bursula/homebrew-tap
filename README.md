@@ -14,9 +14,9 @@ bursula doctor
 
 Homebrew installs the released npm package and builds its native SQLite dependency for the local Node.js runtime.
 
-## Docker
+## Docker (next release)
 
-Run the multi-platform Linux image with:
+The next Bursula release will publish the multi-platform Linux image at:
 
 ```bash
 docker run --rm ghcr.io/bursula/bursula:latest --version
