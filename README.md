@@ -22,7 +22,16 @@ Run the multi-platform Linux image with:
 docker run --rm ghcr.io/bursula/bursula:latest --version
 ```
 
-For reproducible deployments, replace `latest` with a released version such as `0.3.2`. The image supports Linux AMD64 and ARM64.
+For reproducible deployments, replace `latest` with a released version such as `0.3.3`. The image supports Linux AMD64 and ARM64.
+
+For Docker on a laptop or desktop, export the version-matched Compose file, Chromium seccomp profile, example environment, and setup instructions directly from the image:
+
+```bash
+docker run --rm ghcr.io/bursula/bursula:0.3.3 deployment export | tar -x
+cd bursula
+```
+
+For Synology DSM, Kubernetes, NAS, server, or another container environment, review the full deployment documentation before starting.
 
 For Synology DSM and unattended Docker installations, use the checked-in [Compose file](./compose.yaml), [Chromium seccomp profile](./docker/seccomp_profile.json), and [DSM setup guide](./docs/synology-dsm.md).
 
