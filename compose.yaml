@@ -1,0 +1,34 @@
+services:
+  bursula:
+    image: ${BURSULA_IMAGE:-ghcr.io/bursula/bursula:latest}
+    command: ["run", "--all"]
+    environment:
+      BURSULA_ENABLE_NOVNC: "0"
+    volumes:
+      - ${BURSULA_CONFIG_PATH:-./.bursula-data}:/home/node/.bursula
+      - ${BURSULA_INVOICE_PATH:-./.bursula-invoices}:/invoices
+      - ${BURSULA_SECRETS_PATH:-./.bursula-secrets}:/run/secrets:ro
+    security_opt:
+      - seccomp=./docker/seccomp_profile.json
+    shm_size: 1gb
+    restart: "no"
+
+  setup:
+    profiles: ["setup"]
+    image: ${BURSULA_IMAGE:-ghcr.io/bursula/bursula:latest}
+    command: ["setup", "web"]
+    environment:
+      BURSULA_ENABLE_NOVNC: "1"
+      BURSULA_ENABLE_SETUP_WEB: "1"
+      BURSULA_SETUP_TOKEN: ${BURSULA_SETUP_TOKEN:-}
+      BURSULA_VNC_PASSWORD_FILE: /run/secrets/novnc-password
+    ports:
+      - ${BURSULA_NOVNC_BIND:-127.0.0.1}:6080:6080
+    volumes:
+      - ${BURSULA_CONFIG_PATH:-./.bursula-data}:/home/node/.bursula
+      - ${BURSULA_INVOICE_PATH:-./.bursula-invoices}:/invoices
+      - ${BURSULA_SECRETS_PATH:-./.bursula-secrets}:/run/secrets:ro
+    security_opt:
+      - seccomp=./docker/seccomp_profile.json
+    shm_size: 1gb
+    restart: "no"

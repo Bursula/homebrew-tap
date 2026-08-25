@@ -14,15 +14,17 @@ bursula doctor
 
 Homebrew installs the released npm package and builds its native SQLite dependency for the local Node.js runtime.
 
-## Docker (next release)
+## Docker
 
-The next Bursula release will publish the multi-platform Linux image at:
+Run the multi-platform Linux image with:
 
 ```bash
 docker run --rm ghcr.io/bursula/bursula:latest --version
 ```
 
-For reproducible deployments, replace `latest` with a released version such as `0.3.0`. The image supports Linux AMD64 and ARM64.
+For reproducible deployments, replace `latest` with a released version such as `0.3.2`. The image supports Linux AMD64 and ARM64.
+
+For Synology DSM and unattended Docker installations, use the checked-in [Compose file](./compose.yaml), [Chromium seccomp profile](./docker/seccomp_profile.json), and [DSM setup guide](./docs/synology-dsm.md).
 
 ## Activation and documentation
 
