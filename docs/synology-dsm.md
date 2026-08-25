@@ -9,7 +9,7 @@ Normal runs do not expose a browser port. Chromium remains headed but draws to t
 For Docker Desktop on a laptop or desktop, export the Compose file, Chromium seccomp profile, example environment, and concise instructions directly from the versioned image:
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.3 deployment export | tar -x
+docker run --rm ghcr.io/bursula/bursula:0.3.4 deployment export | tar -x
 cd bursula
 ```
 
@@ -48,7 +48,7 @@ On Synology DSM, use persistent directories such as:
 Copy `compose.yaml` and `docker/seccomp_profile.json` into that directory, retaining the `docker` subdirectory, and set absolute paths in a sibling `.env` file. The profile is the Playwright 1.62.1 Docker seccomp profile: it retains a syscall allowlist while permitting the user-namespace operations required by Chromium's sandbox. Do not replace it with `seccomp=unconfined` or add `--no-sandbox`.
 
 ```dotenv
-BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.3
+BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.4
 BURSULA_CONFIG_PATH=/volume1/docker/bursula/data
 BURSULA_INVOICE_PATH=/volume1/docker/bursula/invoices
 BURSULA_SECRETS_PATH=/volume1/docker/bursula/secrets
@@ -110,9 +110,20 @@ docker compose run --rm bursula \
   targets attach lexware --for personal-chatgpt --yes
 ```
 
+## Container help and state
+
+Running the image without a command does not start an invoice run. It reads the mounted state and prints the relevant next steps: initial deployment instructions when no valid license is present, web setup when the license is valid but no automation exists, or run and maintenance commands when configurations are ready.
+
+```bash
+docker run --rm ghcr.io/bursula/bursula:0.3.4
+docker compose run --rm bursula container help
+```
+
+A bare `docker run` without a state volume always appears unconfigured because the container is ephemeral. The Compose form mounts the configured state and can therefore report its actual status.
+
 ## Run once or on a schedule
 
-The image and the `bursula` Compose service default to one `run --all` execution and then exit:
+The `bursula` Compose service explicitly performs one `run --all` execution and then exits:
 
 ```bash
 docker compose run --rm bursula
@@ -172,5 +183,5 @@ docker run --rm \
   --security-opt seccomp=./docker/seccomp_profile.json \
   --shm-size 1g \
   --volume ./.bursula-data:/home/node/.bursula \
-  ghcr.io/bursula/bursula:0.3.3
+  ghcr.io/bursula/bursula:0.3.4
 ```
