@@ -19,15 +19,16 @@ Homebrew installs the released npm package and builds its native SQLite dependen
 Run the multi-platform Linux image with:
 
 ```bash
+docker run --rm ghcr.io/bursula/bursula:latest
 docker run --rm ghcr.io/bursula/bursula:latest --version
 ```
 
-For reproducible deployments, replace `latest` with a released version such as `0.3.3`. The image supports Linux AMD64 and ARM64.
+Without a command, the image prints state-aware setup or operating guidance and does not start an invoice run. For reproducible deployments, replace `latest` with a released version such as `0.3.4`. The image supports Linux AMD64 and ARM64.
 
 For Docker on a laptop or desktop, export the version-matched Compose file, Chromium seccomp profile, example environment, and setup instructions directly from the image:
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.3 deployment export | tar -x
+docker run --rm ghcr.io/bursula/bursula:0.3.4 deployment export | tar -x
 cd bursula
 ```
 
