@@ -4,6 +4,21 @@ The official Bursula image is the supported Docker runtime. It contains Chromium
 
 Normal runs do not expose a browser port. Chromium remains headed but draws to the virtual Xvfb display. noVNC is enabled only while a human completes login, MFA, consent, or reauthentication.
 
+## Export the matching deployment files
+
+For Docker Desktop on a laptop or desktop, export the Compose file, Chromium seccomp profile, example environment, and concise instructions directly from the versioned image:
+
+```bash
+docker run --rm ghcr.io/bursula/bursula:0.3.3 deployment export | tar -x
+cd bursula
+```
+
+Then follow the exported `README.md`. Synology DSM, Kubernetes, NAS, server, and other orchestrated deployments need environment-specific storage, permissions, networking, secret management, and scheduling; review the rest of this document before starting.
+
+## Kubernetes
+
+Kubernetes does not consume the Compose file directly. Follow the [Kubernetes deployment guide](./kubernetes.md) for persistent claims, a temporary setup Deployment reached only through `kubectl port-forward`, a non-overlapping CronJob, secrets, and the Chromium seccomp profile.
+
 ## Persistent paths
 
 The container runs as UID/GID `1000:1000` and uses these paths:
@@ -33,7 +48,7 @@ On Synology DSM, use persistent directories such as:
 Copy `compose.yaml` and `docker/seccomp_profile.json` into that directory, retaining the `docker` subdirectory, and set absolute paths in a sibling `.env` file. The profile is the Playwright 1.62.1 Docker seccomp profile: it retains a syscall allowlist while permitting the user-namespace operations required by Chromium's sandbox. Do not replace it with `seccomp=unconfined` or add `--no-sandbox`.
 
 ```dotenv
-BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.2
+BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.3
 BURSULA_CONFIG_PATH=/volume1/docker/bursula/data
 BURSULA_INVOICE_PATH=/volume1/docker/bursula/invoices
 BURSULA_SECRETS_PATH=/volume1/docker/bursula/secrets
@@ -157,5 +172,5 @@ docker run --rm \
   --security-opt seccomp=./docker/seccomp_profile.json \
   --shm-size 1g \
   --volume ./.bursula-data:/home/node/.bursula \
-  ghcr.io/bursula/bursula:0.3.2
+  ghcr.io/bursula/bursula:0.3.3
 ```
