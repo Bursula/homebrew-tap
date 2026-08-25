@@ -1,8 +1,8 @@
 class Bursula < Formula
   desc "Fetch and file your invoices"
   homepage "https://github.com/Bursula/homebrew-tap"
-  url "https://github.com/Bursula/homebrew-tap/releases/download/v0.3.2/bursula-0.3.2.tgz"
-  sha256 "48f1345982668dfae281f34f925556be175539bac3c12636b114b8839aa5cf3f"
+  url "https://github.com/Bursula/homebrew-tap/releases/download/v0.3.3/bursula-0.3.3.tgz"
+  sha256 "f562eac737199269047996c36d152eecf2a9adf6b3315b3ec1a5d708f9c70220"
   license :cannot_represent
 
   depends_on "python" => :build
