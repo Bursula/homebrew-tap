@@ -79,7 +79,7 @@ spec:
           localhostProfile: bursula.json
       containers:
         - name: bursula
-          image: ghcr.io/bursula/bursula:0.3.6
+          image: ghcr.io/bursula/bursula:0.3.7
           args: [setup, web]
           env:
             - name: BURSULA_ENABLE_NOVNC
@@ -178,7 +178,7 @@ spec:
               localhostProfile: bursula.json
           containers:
             - name: bursula
-              image: ghcr.io/bursula/bursula:0.3.6
+              image: ghcr.io/bursula/bursula:0.3.7
               args: [run, --all]
               resources:
                 requests:
