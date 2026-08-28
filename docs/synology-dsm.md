@@ -9,7 +9,7 @@ Normal runs do not expose a browser port. Chromium remains headed but draws to t
 For Docker Desktop on a laptop or desktop, export the Compose file, Chromium seccomp profile, example environment, and concise instructions directly from the versioned image:
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.9 deployment export | tar -x && ./bursula/install.sh
+docker run --rm ghcr.io/bursula/bursula:0.3.10 deployment export | tar -x && ./bursula/install.sh
 ```
 
 The installer prepares the local files and validates Compose without starting a container. Afterwards, run `cd bursula` and use `./bursula setup`, `./bursula status`, `./bursula run`, or `./bursula doctor`. Synology DSM, Kubernetes, NAS, server, and other orchestrated deployments need environment-specific storage, permissions, networking, secret management, and scheduling; review the rest of this document before starting.
@@ -47,7 +47,7 @@ On Synology DSM, use persistent directories such as:
 Copy `compose.yaml` and `docker/seccomp_profile.json` into that directory, retaining the `docker` subdirectory, and set absolute paths in a sibling `.env` file. The profile is the Playwright 1.62.1 Docker seccomp profile: it retains a syscall allowlist while permitting the user-namespace operations required by Chromium's sandbox. Do not replace it with `seccomp=unconfined` or add `--no-sandbox`.
 
 ```dotenv
-BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.9
+BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.10
 BURSULA_CONFIG_PATH=/volume1/docker/bursula/data
 BURSULA_INVOICE_PATH=/volume1/docker/bursula/invoices
 BURSULA_SECRETS_PATH=/volume1/docker/bursula/secrets
@@ -114,7 +114,7 @@ docker compose run --rm bursula \
 Running the image without a command does not start an invoice run. It reads the mounted state and prints the relevant next steps: initial deployment instructions when no valid license is present, web setup when the license is valid but no automation exists, or run and maintenance commands when configurations are ready.
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.9
+docker run --rm ghcr.io/bursula/bursula:0.3.10
 docker compose run --rm bursula container help
 ```
 
@@ -182,5 +182,5 @@ docker run --rm \
   --security-opt seccomp=./docker/seccomp_profile.json \
   --shm-size 1g \
   --volume ./.bursula-data:/home/node/.bursula \
-  ghcr.io/bursula/bursula:0.3.9
+  ghcr.io/bursula/bursula:0.3.10
 ```
