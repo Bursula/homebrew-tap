@@ -9,7 +9,7 @@ Normal runs do not expose a browser port. Chromium remains headed but draws to t
 For Docker Desktop on a laptop or desktop, export the Compose file, Chromium seccomp profile, example environment, and concise instructions directly from the versioned image:
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.5 deployment export | tar -x && ./bursula/install.sh
+docker run --rm ghcr.io/bursula/bursula:0.3.6 deployment export | tar -x && ./bursula/install.sh
 ```
 
 The installer prepares the local files and validates Compose without starting a container. Afterwards, run `cd bursula` and use `./bursula setup`, `./bursula status`, `./bursula run`, or `./bursula doctor`. Synology DSM, Kubernetes, NAS, server, and other orchestrated deployments need environment-specific storage, permissions, networking, secret management, and scheduling; review the rest of this document before starting.
@@ -47,7 +47,7 @@ On Synology DSM, use persistent directories such as:
 Copy `compose.yaml` and `docker/seccomp_profile.json` into that directory, retaining the `docker` subdirectory, and set absolute paths in a sibling `.env` file. The profile is the Playwright 1.62.1 Docker seccomp profile: it retains a syscall allowlist while permitting the user-namespace operations required by Chromium's sandbox. Do not replace it with `seccomp=unconfined` or add `--no-sandbox`.
 
 ```dotenv
-BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.5
+BURSULA_IMAGE=ghcr.io/bursula/bursula:0.3.6
 BURSULA_CONFIG_PATH=/volume1/docker/bursula/data
 BURSULA_INVOICE_PATH=/volume1/docker/bursula/invoices
 BURSULA_SECRETS_PATH=/volume1/docker/bursula/secrets
@@ -66,7 +66,7 @@ An authenticated HTTPS reverse proxy or encrypted VPN can replace the SSH tunnel
 
 Browser profiles are tied to Linux and the container CPU architecture. Do not copy a profile from macOS, Windows, or a NAS with another architecture.
 
-The embedded remote display uses a one-line, exactly eight-character internal VNC password file owned by UID 1000. You never enter or see this password in the web UI; the one-time setup link supplies it to the embedded viewer. Classic VNC authentication only uses eight characters, so generate it randomly. Set `secrets_directory` to the same host directory used by `BURSULA_SECRETS_PATH`; Compose does not export values from `.env` into your shell:
+The embedded remote display uses a one-line, exactly eight-character internal VNC password. You never enter or see this password in the web UI; the one-time setup link supplies it to the embedded viewer. If `/run/secrets/novnc-password` is not mounted, the setup container creates a random private password under the persistent Bursula state directory and immediately continues starting the web setup. Existing externally managed password files remain supported. To create one explicitly, set `secrets_directory` to the same host directory used by `BURSULA_SECRETS_PATH`; Compose does not export values from `.env` into your shell:
 
 ```bash
 secrets_directory=.bursula-secrets
@@ -85,13 +85,13 @@ docker compose --profile setup run --rm --service-ports setup
 
 The container prints a one-time URL such as `http://127.0.0.1:6080/#token=…`. Open that exact URL through the SSH tunnel. If this installation is not activated, upload the issued `.lic` file first. Bursula validates its signature, validity period, and `setup` entitlement before storing it privately inside the mapped `/home/node/.bursula` state. The browser and integration list are not exposed by the setup API until that validation succeeds.
 
-Then choose the integration, enter a descriptive name, review the generated editable configuration ID, and select the initial import range. Click **Start login**, complete login and MFA in the embedded browser, then click **Login completed**. During login Chromium has no Playwright or DevTools connection. Bursula closes Chromium, removes its profile locks, and stores the confirmed profile in the mapped state directory. The first normal run performs the provider-specific session check.
+Then choose the integration, enter a descriptive name, review the generated editable configuration ID, select the initial import range, and choose the delivery target ID. The Docker web setup creates a local-folder target at `/invoices` and attaches it to the connection automatically. Click **Start login**, complete login and MFA in the embedded browser, then click **Login completed**. During login Chromium has no Playwright or DevTools connection. Bursula closes Chromium, removes its profile locks, stores the confirmed profile in the mapped state directory, and finishes the target configuration. The first normal run performs the provider-specific session check.
 
 The same page can configure more integrations. Click **Finish setup** when done, then close the SSH tunnel and disable DSM SSH again. The setup token is regenerated for every server start and is required by both the setup API and remote-display connection. Only one setup or run may use a given configuration at a time.
 
-## Configure delivery
+## Manage delivery targets
 
-The example Compose file maps the invoice directory to `/invoices`:
+The web setup already creates and attaches a local invoice-folder target. Use the CLI when you want to add another reusable local-folder target or attach a target to another existing connection. The example Compose file maps the invoice directory to `/invoices`:
 
 ```bash
 docker compose run --rm bursula \
@@ -114,7 +114,7 @@ docker compose run --rm bursula \
 Running the image without a command does not start an invoice run. It reads the mounted state and prints the relevant next steps: initial deployment instructions when no valid license is present, web setup when the license is valid but no automation exists, or run and maintenance commands when configurations are ready.
 
 ```bash
-docker run --rm ghcr.io/bursula/bursula:0.3.5
+docker run --rm ghcr.io/bursula/bursula:0.3.6
 docker compose run --rm bursula container help
 ```
 
@@ -182,5 +182,5 @@ docker run --rm \
   --security-opt seccomp=./docker/seccomp_profile.json \
   --shm-size 1g \
   --volume ./.bursula-data:/home/node/.bursula \
-  ghcr.io/bursula/bursula:0.3.5
+  ghcr.io/bursula/bursula:0.3.6
 ```
