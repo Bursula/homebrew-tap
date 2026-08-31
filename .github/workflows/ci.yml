@@ -18,7 +18,7 @@ jobs:
     name: Audit, install, and test
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Tap checkout
         run: brew tap bursula/tap "$GITHUB_WORKSPACE"
       - name: Audit formula
